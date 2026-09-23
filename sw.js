@@ -1,6 +1,6 @@
 const CACHE_NAME = 'chefs-pass-v1';
 const ASSETS_TO_CACHE = [
-  './the-chefs-pass.html',
+  './index.html',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png'

@@ -2,7 +2,7 @@
   "name": "The Chef's Pass",
   "short_name": "Chef's Pass",
   "description": "Real dishes, real chefs. Filter by category, cuisine, or key ingredient.",
-  "start_url": "./the-chefs-pass.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
