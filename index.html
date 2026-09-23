@@ -799,6 +799,16 @@ function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight){
 
 buildCuisineChips();
 buildIngredientChips();
+
+// Support deep links from PWA shortcuts, e.g. index.html?cat=Dessert
+const urlParams = new URLSearchParams(window.location.search);
+const linkedCat = urlParams.get('cat');
+if(linkedCat && ["Vegetarian","Non-Vegetarian","Dessert"].includes(linkedCat)){
+  state.cat = linkedCat;
+  [...document.getElementById('catTabs').children].forEach(c=>c.classList.remove('active'));
+  document.querySelector(`.cat-tab[data-cat="${linkedCat}"]`).classList.add('active');
+}
+
 renderMysteryBox();
 renderFeed();
 render();
