@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.vaachi.chefpass",
+        "sha256_cert_fingerprints": ["F8:05:A2:98:5C:AD:39:55:67:65:4F:E6:10:75:FB:3E:31:1B:67:BB:56:79:53:4A:5E:D2:A8:95:5F:74:26:17"]
+      }
+    }]
