@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chef's Pass — Real Dishes from Real Chefs</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1b1918">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --charcoal:#1b1918;
+    --steel:#242220;
+    --steel-2:#2f2c29;
+    --ticket:#f3eee4;
+    --ticket-shadow:#d9d2c2;
+    --ember:#c1432e;
+    --ember-dark:#8f3021;
+    --herb:#3f7d4a;
+    --herb-dark:#2b5933;
+    --gold:#c9a227;
+    --gold-dark:#8f7318;
+    --chalk:#e8e4da;
+    --chalk-dim:#a9a49a;
+    --ink:#1b1918;
+    --radius:2px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--charcoal);
+    background-image:
+      radial-gradient(circle at 20% 0%, rgba(255,255,255,0.03), transparent 40%),
+      repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 1px, transparent 1px, transparent 12px);
+    color:var(--chalk);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+  }
+  a{color:inherit;}
+  ::selection{background:var(--gold);color:var(--ink);}
+  :focus-visible{outline:2px solid var(--gold); outline-offset:2px;}
+
+  /* ---------- HEADER / RAIL ---------- */
+  header.top{
+    padding:36px 24px 20px;
+    max-width:1180px;
+    margin:0 auto;
+    border-bottom:1px dashed #47433d;
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.28em;
+    color:var(--chalk-dim);
+    text-transform:uppercase;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:8px;height:8px;border-radius:50%;
+    background:var(--herb);
+    box-shadow:0 0 0 3px rgba(63,125,74,0.2);
+  }
+  h1.brand{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(42px,7vw,74px);
+    letter-spacing:0.02em;
+    margin:6px 0 4px;
+    line-height:0.95;
+    color:var(--chalk);
+  }
+  h1.brand span{color:var(--ember);}
+  .tagline{
+    color:var(--chalk-dim);
+    font-size:15px;
+    max-width:560px;
+    margin:0 0 4px;
+  }
+  .ticket-count{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--gold);
+    margin-top:14px;
+  }
+
+  /* ---------- FILTER DOCKET ---------- */
+  .filters{
+    max-width:1180px;
+    margin:0 auto;
+    padding:24px 24px 0;
+  }
+  .filter-block{margin-bottom:18px;}
+  .filter-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.16em;
+    text-transform:uppercase;
+    color:var(--chalk-dim);
+    margin-bottom:10px;
+    display:block;
+  }
+  .cat-tabs{display:flex;gap:8px;flex-wrap:wrap;}
+  .cat-tab{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:18px;
+    letter-spacing:0.03em;
+    background:var(--steel);
+    color:var(--chalk);
+    border:1px solid #47433d;
+    padding:9px 18px 7px;
+    cursor:pointer;
+    border-radius:var(--radius);
+    transition:all .15s ease;
+  }
+  .cat-tab:hover{border-color:var(--chalk-dim);}
+  .cat-tab.active[data-cat="All"]{background:var(--chalk);color:var(--ink);border-color:var(--chalk);}
+  .cat-tab.active[data-cat="Vegetarian"]{background:var(--herb);color:#fff;border-color:var(--herb);}
+  .cat-tab.active[data-cat="Non-Vegetarian"]{background:var(--ember);color:#fff;border-color:var(--ember);}
+  .cat-tab.active[data-cat="Dessert"]{background:var(--gold);color:var(--ink);border-color:var(--gold);}
+
+  .chip-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    background:transparent;
+    color:var(--chalk-dim);
+    border:1px solid #47433d;
+    padding:6px 12px;
+    border-radius:20px;
+    cursor:pointer;
+    transition:all .15s ease;
+  }
+  .chip:hover{color:var(--chalk);border-color:var(--chalk-dim);}
+  .chip.active{background:var(--gold);color:var(--ink);border-color:var(--gold);font-weight:600;}
+
+  .search-row{display:flex;gap:10px;max-width:420px;}
+  input[type="text"]{
+    flex:1;
+    background:var(--steel);
+    border:1px solid #47433d;
+    color:var(--chalk);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:13px;
+    padding:10px 12px;
+    border-radius:var(--radius);
+  }
+  input[type="text"]::placeholder{color:var(--chalk-dim);}
+  .clear-btn{
+    background:none;
+    border:1px solid #47433d;
+    color:var(--chalk-dim);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.1em;
+    padding:0 14px;
+    cursor:pointer;
+    border-radius:var(--radius);
+    text-transform:uppercase;
+  }
+  .clear-btn:hover{color:var(--ember);border-color:var(--ember);}
+
+  /* ---------- MYSTERY BOX ---------- */
+  .mystery{
+    max-width:1180px;margin:30px auto 0;padding:0 24px;
+  }
+  .mystery-panel{
+    background:linear-gradient(155deg, var(--steel-2), var(--steel));
+    border:1px solid #47433d;
+    padding:24px;
+    position:relative;
+    overflow:hidden;
+  }
+  .mystery-panel::before{
+    content:"";position:absolute;top:-40%;right:-10%;width:280px;height:280px;
+    background:radial-gradient(circle, rgba(201,162,39,0.14), transparent 70%);
+    pointer-events:none;
+  }
+  .mystery-top{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:14px;margin-bottom:16px;}
+  .mystery-eyebrow{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);}
+  .mystery-title{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:0.02em;margin:2px 0 0;}
+  .mystery-week{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--chalk-dim);}
+  .mystery-boxes{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;}
+  .mystery-item{
+    background:var(--ticket);color:var(--ink);
+    font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.02em;
+    padding:12px 18px;border-radius:2px;
+    box-shadow:0 6px 14px rgba(0,0,0,0.3);
+    transform:rotate(-2deg);
+  }
+  .mystery-item:nth-child(2){transform:rotate(1.5deg);}
+  .mystery-item:nth-child(3){transform:rotate(-1deg);}
+  .mystery-actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:6px;}
+  .btn-primary{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;
+    background:var(--gold);color:var(--ink);border:none;padding:10px 16px;border-radius:2px;cursor:pointer;font-weight:600;
+  }
+  .btn-primary:hover{background:#e0bb3a;}
+  .btn-ghost{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;
+    background:none;color:var(--chalk-dim);border:1px solid #47433d;padding:10px 16px;border-radius:2px;cursor:pointer;
+  }
+  .btn-ghost:hover{color:var(--chalk);border-color:var(--chalk-dim);}
+
+  .mystery-submit{
+    margin-top:18px;padding-top:16px;border-top:1px dashed #47433d;
+    display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+  }
+  .mystery-submit input[type="text"]{max-width:260px;}
+  .feed{margin-top:16px;display:flex;flex-direction:column;gap:8px;max-height:200px;overflow-y:auto;}
+  .feed-item{
+    font-family:'IBM Plex Mono',monospace;font-size:12.5px;color:var(--chalk);
+    background:rgba(255,255,255,0.03);border-left:2px solid var(--gold);
+    padding:8px 10px;
+  }
+  .feed-item b{color:var(--gold);}
+  .feed-empty{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--chalk-dim);}
+
+  /* ---------- TICKET RAIL / GRID ---------- */
+  .rail-line{
+    max-width:1180px;margin:28px auto 0;padding:0 24px;
+    display:flex;align-items:center;gap:8px;
+    color:var(--chalk-dim);
+  }
+  .rail-line .line{flex:1;height:1px;background:#47433d;}
+  .rail-line span{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;}
+
+  .grid{
+    max-width:1180px;
+    margin:0 auto;
+    padding:20px 24px 60px;
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(270px,1fr));
+    gap:26px 20px;
+  }
+
+  .ticket{
+    position:relative;
+    background:var(--ticket);
+    color:var(--ink);
+    padding:18px 16px 22px;
+    cursor:pointer;
+    clip-path:polygon(
+      0% 0%, 100% 0%, 100% 94%,
+      95% 100%, 90% 94%, 85% 100%, 80% 94%, 75% 100%, 70% 94%, 65% 100%,
+      60% 94%, 55% 100%, 50% 94%, 45% 100%, 40% 94%, 35% 100%, 30% 94%,
+      25% 100%, 20% 94%, 15% 100%, 10% 94%, 5% 100%, 0% 94%
+    );
+    box-shadow:0 10px 0 -4px var(--ticket-shadow), 0 14px 22px rgba(0,0,0,0.35);
+    transform:rotate(var(--tilt,0deg));
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .ticket:nth-child(3n+1){--tilt:-0.6deg;}
+  .ticket:nth-child(3n+2){--tilt:0.4deg;}
+  .ticket:nth-child(3n){--tilt:-0.2deg;}
+  .ticket:hover{transform:rotate(0deg) translateY(-4px);box-shadow:0 16px 0 -4px var(--ticket-shadow), 0 22px 26px rgba(0,0,0,0.4);}
+
+  .ticket-head{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:0.08em;
+    color:#6b665c;margin-bottom:10px;text-transform:uppercase;
+  }
+  .cat-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px;}
+  .cat-dot.Vegetarian{background:var(--herb);}
+  .cat-dot.Non-Vegetarian{background:var(--ember);}
+  .cat-dot.Dessert{background:var(--gold-dark);}
+
+  .dish-name{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:26px;
+    line-height:1.02;
+    letter-spacing:0.01em;
+    margin:0 0 4px;
+  }
+  .cuisine{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:#6b665c;
+    margin-bottom:12px;
+  }
+  .ing-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px;}
+  .ing-tag{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:9.5px;
+    letter-spacing:0.03em;
+    background:rgba(27,25,24,0.06);
+    border:1px solid rgba(27,25,24,0.15);
+    padding:3px 7px;
+    border-radius:2px;
+    text-transform:uppercase;
+  }
+  .ticket-foot{
+    display:flex;justify-content:space-between;align-items:center;
+    border-top:1px dashed #b9b2a0;
+    padding-top:10px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    color:#5a564d;
+  }
+  .stamp{
+    position:absolute;top:14px;right:14px;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:13px;
+    letter-spacing:0.08em;
+    color:var(--herb-dark);
+    border:2px solid var(--herb-dark);
+    padding:2px 8px;
+    border-radius:3px;
+    transform:rotate(8deg);
+    opacity:0;
+    transition:opacity .15s ease;
+    pointer-events:none;
+  }
+  .ticket.passed .stamp{opacity:0.85;}
+
+  .credit-badge{
+    display:inline-flex;align-items:center;gap:4px;
+    font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:0.06em;text-transform:uppercase;
+    background:rgba(201,162,39,0.16);color:var(--gold-dark);
+    border:1px solid rgba(201,162,39,0.5);
+    padding:3px 7px;border-radius:2px;margin-bottom:8px;
+  }
+  .credit-line{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--gold-dark);
+    margin:-8px 0 14px;
+  }
+
+  .empty-state{
+    max-width:1180px;margin:40px auto;padding:60px 24px;text-align:center;
+    font-family:'IBM Plex Mono',monospace;color:var(--chalk-dim);
+    border:1px dashed #47433d;
+  }
+  .empty-state strong{display:block;font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--chalk);letter-spacing:0.02em;margin-bottom:6px;}
+
+  /* ---------- MODAL ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(10,9,8,0.78);
+    display:none;align-items:flex-start;justify-content:center;
+    padding:40px 16px;overflow-y:auto;z-index:50;
+  }
+  .overlay.open{display:flex;}
+  .docket{
+    background:var(--ticket);color:var(--ink);max-width:560px;width:100%;
+    padding:32px 30px 34px;position:relative;border-radius:2px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.5);
+  }
+  .docket-close{
+    position:absolute;top:14px;right:16px;
+    background:none;border:none;font-family:'IBM Plex Mono',monospace;
+    font-size:20px;color:#6b665c;cursor:pointer;line-height:1;
+  }
+  .docket-close:hover{color:var(--ember);}
+  .docket .ticket-head{margin-bottom:14px;}
+  .docket .dish-name{font-size:36px;margin-bottom:2px;}
+  .docket .cuisine{margin-bottom:16px;}
+  .judge-note{
+    font-style:italic;color:#4a463e;font-size:14px;
+    border-left:3px solid var(--gold-dark);padding-left:12px;margin:0 0 18px;
+  }
+  .docket h4{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;
+    letter-spacing:0.16em;color:#8a8478;margin:20px 0 8px;
+  }
+  .docket ul{margin:0;padding-left:18px;}
+  .docket li{margin-bottom:4px;font-size:14px;}
+  .docket ol{margin:0;padding-left:20px;}
+  .docket ol li{margin-bottom:9px;font-size:14px;line-height:1.5;}
+  .docket-meta{display:flex;gap:18px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:#6b665c;border-top:1px dashed #b9b2a0;border-bottom:1px dashed #b9b2a0;padding:10px 0;margin:16px 0;}
+
+  @media (max-width:600px){
+    .search-row{max-width:none;}
+    .docket{padding:26px 20px 28px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="eyebrow">Every dish credited to a real chef — contestants, winners, and judges</div>
+  <h1 class="brand">THE CHEF'S <span>PASS</span></h1>
+  <p class="tagline">Real dishes from real chefs, sourced from Australian cooking-competition television across every season. Filter by category, cuisine, or the one ingredient sitting in your fridge right now.</p>
+  <div class="ticket-count" id="ticketCount"></div>
+</header>
+
+<div class="filters">
+  <div class="filter-block">
+    <span class="filter-label">Category</span>
+    <div class="cat-tabs" id="catTabs">
+      <button class="cat-tab active" data-cat="All">All</button>
+      <button class="cat-tab" data-cat="Vegetarian">Vegetarian</button>
+      <button class="cat-tab" data-cat="Non-Vegetarian">Non-Vegetarian</button>
+      <button class="cat-tab" data-cat="Dessert">Desserts</button>
+    </div>
+  </div>
+
+  <div class="filter-block">
+    <span class="filter-label">Cuisine (tap to toggle, multiple allowed)</span>
+    <div class="chip-row" id="cuisineChips"></div>
+  </div>
+
+  <div class="filter-block">
+    <span class="filter-label">Key ingredient</span>
+    <div class="chip-row" id="ingredientChips" style="margin-bottom:10px;"></div>
+    <div class="search-row">
+      <input type="text" id="searchInput" placeholder="search any ingredient…  e.g. duck, tahini, mascarpone">
+      <button class="clear-btn" id="clearBtn">Clear all</button>
+    </div>
+  </div>
+</div>
+
+<div class="mystery">
+  <div class="mystery-panel">
+    <div class="mystery-top">
+      <div>
+        <div class="mystery-eyebrow">Weekly challenge</div>
+        <h2 class="mystery-title">The Mystery Box</h2>
+      </div>
+      <div class="mystery-week" id="mysteryWeek"></div>
+    </div>
+    <div class="mystery-boxes" id="mysteryItems"></div>
+    <div class="mystery-actions">
+      <button class="btn-primary" id="mysteryFilterBtn">Show dishes using these</button>
+      <button class="btn-ghost" id="mysteryClearBtn">Back to full pass</button>
+    </div>
+    <div class="mystery-submit">
+      <input type="text" id="mysteryDishInput" placeholder="what did you make with this week's box?">
+      <input type="text" id="mysteryNameInput" placeholder="your name (optional)" style="max-width:160px;">
+      <button class="btn-primary" id="mysterySubmitBtn">Post to the pass</button>
+      <button class="btn-ghost" id="mysteryCardBtn">Download my ticket</button>
+    </div>
+    <div class="feed" id="mysteryFeed"></div>
+  </div>
+</div>
+
+<div class="rail-line"><span>The Pass</span><div class="line"></div></div>
+
+<div class="grid" id="grid"></div>
+<div class="empty-state" id="emptyState" style="display:none;">
+  <strong>Nothing on the pass matches that ticket.</strong>
+  Try clearing a filter — the kitchen's bigger than it looks.
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="docket" id="docketBody"></div>
+</div>
+
+<script>
+const RECIPES = [
+  // ---------------- VEGETARIAN ----------------
+  {name:"Baba Ganoush with Flatbread",cat:"Vegetarian",cuisine:"Middle Eastern",credit:"Green Team, MasterChef Australia Season 13 (2021)",time:"45 min",difficulty:"Easy",ingredients:["Eggplant","Tahini","Garlic","Flatbread","Lemon"],note:"The eggplant must blister black before it reads smoky enough on the plate.",method:["Char whole eggplants directly over a flame or under a broiler until fully collapsed.","Scoop out the flesh and drain off any excess liquid.","Blend with tahini, garlic, lemon juice, and a pinch of cumin until smooth.","Season and rest for 10 minutes to let the flavors settle.","Serve spread thick on warm flatbread with a drizzle of olive oil."]},
+  {name:"Bulgur Wheat Salad with Roast Glazed Pumpkin",cat:"Vegetarian",cuisine:"Middle Eastern",credit:"Green Team, MasterChef Australia Season 13 (2021)",time:"50 min",difficulty:"Easy",ingredients:["Bulgur Wheat","Pumpkin","Pomegranate","Mint","Lemon"],note:"The pumpkin needs a proper glaze, not just a roast — that's what carries the dish.",method:["Roast pumpkin wedges with honey and spice until caramelized at the edges.","Cook bulgur wheat in stock until tender, then fluff and cool slightly.","Toss the bulgur with chopped mint, parsley, and a sharp lemon dressing.","Fold through the roasted pumpkin, keeping the pieces mostly intact.","Finish with pomegranate seeds for acidity and crunch."]},
+  {name:"Eggplant Dip with Flatbreads",cat:"Vegetarian",cuisine:"Middle Eastern",credit:"Green Team, MasterChef Australia team challenge (2017)",time:"40 min",difficulty:"Easy",ingredients:["Eggplant","Tahini","Garlic","Flatbread","Olive Oil"],note:"A team-challenge staple — the judges score it on how confidently it's seasoned, not on novelty.",method:["Roast eggplant until fully soft and smoky throughout.","Mash the flesh with garlic, tahini, and a generous squeeze of lemon.","Season aggressively — this dip should taste under-seasoned before it's ever right.","Rest to let the flavors combine before plating.","Serve alongside warm, lightly charred flatbread."]},
+  {name:"Mushroom & Goat's Cheese Tart",cat:"Vegetarian",cuisine:"French",credit:"Green Team, MasterChef Australia team challenge (2017)",time:"1 hr",difficulty:"Medium",ingredients:["Mushroom","Goat's Cheese","Puff Pastry","Thyme","Egg"],note:"A soggy tart base is the single fastest way to lose a team challenge.",method:["Blind-bake a puff pastry base until golden and fully crisp.","Sauté mushrooms hard and dry in a hot pan so they don't release liquid into the tart.","Dot the base with goat's cheese and the cooked mushrooms.","Bake until the cheese softens and the pastry edges are deep golden.","Finish with fresh thyme leaves just before serving."]},
+  {name:"Grilled Halloumi with Harissa Carrots",cat:"Vegetarian",cuisine:"Mediterranean",credit:"Blue Team, MasterChef Australia team challenge (2017)",time:"30 min",difficulty:"Easy",ingredients:["Halloumi","Carrot","Harissa","Yoghurt","Honey"],note:"Halloumi has a narrow window — thirty extra seconds on the grill and it turns rubbery.",method:["Roast whole baby carrots with honey and harissa paste until tender and sticky.","Whisk yoghurt with a little extra harissa for a sharp, spiced sauce.","Slice halloumi thickly and grill for 60–90 seconds per side until deep char lines form.","Spoon the yoghurt sauce onto the plate first.","Layer the carrots and grilled halloumi on top, finishing with the pan juices."]},
+  {name:"Roasted Cauliflower Steak",cat:"Vegetarian",cuisine:"Mediterranean",credit:"Blue Team, MasterChef Australia team challenge (2017)",time:"50 min",difficulty:"Medium",ingredients:["Cauliflower","Capers","Pine Nuts","Lemon","Parsley"],note:"Cut through the core so the steak holds together — a common team-challenge mistake is cutting around it.",method:["Slice a whole cauliflower into thick steaks through the core so they hold their shape.","Sear in a hot pan until deeply golden on both cut faces.","Transfer to the oven to roast through until tender at the center.","Fry capers and pine nuts in butter until crisp and nutty.","Plate the steak and spoon the caper-pine nut butter over the top with a squeeze of lemon."]},
+  {name:"Mushroom Dumplings",cat:"Vegetarian",cuisine:"Chinese",credit:"Blue Team, MasterChef Australia team challenge (2017)",time:"1 hr",difficulty:"Medium",ingredients:["Mushroom","Ginger","Garlic","Dumpling Wrapper","Sesame Oil"],note:"The filling needs to be finely and evenly chopped — chunky filling tears the wrapper on the pleat.",method:["Finely dice a mix of mushrooms and cook down hard with ginger and garlic until dry.","Cool the filling completely before wrapping, or the wrappers will split.","Spoon small portions into dumpling wrappers and pleat closed.","Steam for 6–7 minutes until the wrappers turn glossy and translucent.","Serve with a dipping sauce of soy, black vinegar, and chilli oil."]},
+  {name:"Fried Oyster Mushroom 'Fried Chicken' with No-Dairy Waffles",cat:"Vegetarian",cuisine:"American",credit:"Inspired by Darrsh Clarke, MasterChef Australia: Back to Win (2025)",time:"1 hr",difficulty:"Medium",ingredients:["Oyster Mushroom","Flour","Plant Milk","Maple Syrup","Chilli"],note:"Torn, not sliced — pulling the mushroom by hand is what gives it that shredded, meat-like texture.",method:["Tear oyster mushrooms into large, irregular pieces along their natural grain.","Marinate briefly, then dredge in a seasoned flour and plant-milk batter.","Fry until deeply golden and shatteringly crisp.","Make a simple dairy-free waffle batter and cook until golden in a waffle iron.","Plate the fried mushrooms over the waffles and finish with a chilli-spiked maple syrup."]},
+  {name:"Ricotta & Cavolo Nero Tortellini",cat:"Vegetarian",cuisine:"Italian",credit:"Inspired by Pat, MasterChef Australia 2026 season",time:"1 hr 15 min",difficulty:"Hard",ingredients:["Ricotta","Cavolo Nero","Egg","Flour","Basil Oil"],note:"Roll the pasta on the thinnest setting the machine allows — thickness is the first thing judges check.",method:["Make a fresh egg pasta dough and rest it, wrapped, for 30 minutes.","Blanch cavolo nero, squeeze dry, and finely chop before folding through ricotta, nutmeg, and parmesan.","Roll the dough down to the thinnest setting and cut into small squares.","Fill, fold, and pinch each square into tortellini shapes, sealing the edges well.","Boil briefly until they float, then toss in a basil oil and finish with more parmesan."]},
+  {name:"Baked Cauliflower with Pecans & Caramelised Onion",cat:"Vegetarian",cuisine:"Indian-Fusion",credit:"Inspired by Nandini, MasterChef Australia Season 3",time:"55 min",difficulty:"Easy",ingredients:["Cauliflower","Pecans","Onion","Cilantro","Yoghurt"],note:"The caramelised onion needs real time on low heat — rushing it leaves the dish one-note.",method:["Roast whole cauliflower florets until tender and lightly browned.","Slowly caramelise sliced onions in a pan over low heat until deep amber.","Toast pecans until fragrant, then roughly chop.","Blend cilantro, yoghurt, and a little soy into a green sauce.","Toss the cauliflower with the onions and pecans, then finish with the cilantro-yoghurt sauce."]},
+  {name:"Simon's Wicked Mushroom Dish",cat:"Vegetarian",cuisine:"Modern Australian",credit:"Inspired by Simon Toohey, MasterChef Australia Season 11",time:"40 min",difficulty:"Medium",ingredients:["Mushroom","Garlic","Thyme","Butter","Sourdough"],note:"Cook the mushrooms in batches — crowding the pan is what stops them from browning properly.",method:["Sear a mix of mushroom varieties in batches over high heat, without crowding the pan.","Add garlic and thyme once the mushrooms are deeply browned.","Finish with a knob of butter, swirled through off the heat.","Toast thick slices of sourdough until crisp.","Pile the mushrooms generously over the toast and spoon over the pan butter."]},
+  {name:"Beetroot and Myrtle",cat:"Vegetarian",cuisine:"Modern Australian",credit:"Yellow Team, MasterChef Australia Season 13 (2021)",time:"1 hr",difficulty:"Hard",ingredients:["Beetroot","Lemon Myrtle","Goat's Curd","Native Herbs","Vinegar"],note:"A native-ingredients elimination dish — restraint with the lemon myrtle is what separates a pass from an overpowering plate.",method:["Roast beetroot whole in their skins until tender, then peel while still warm.","Slice or quarter the beetroot and dress lightly in a vinegar reduction.","Infuse cream or curd gently with lemon myrtle, taking care not to overpower it.","Plate the beetroot with dots of the infused curd.","Finish with native herb leaves and a final touch of oil."]},
+  {name:"Quick-Pickled Carrot and Daikon",cat:"Vegetarian",cuisine:"Asian-Fusion",credit:"A MasterChef Australia contestant side dish, as featured on delicious.com.au",time:"20 min + 1 hr pickle",difficulty:"Easy",ingredients:["Carrot","Daikon","Rice Vinegar","Sugar","Chilli"],note:"An hour in the pickle is ideal, but even a rushed ten minutes still gives a decent bite of acidity.",method:["Cut carrot and daikon into thin, even matchsticks.","Dissolve sugar and salt into rice vinegar to make the pickling liquid.","Pack the vegetables tightly into a jar and pour over the warm liquid.","Add a few slices of fresh chilli for heat.","Leave to pickle for at least 10 minutes, ideally closer to an hour, before serving."]},
+
+  // ---------------- NON-VEGETARIAN ----------------
+  {name:"Charcoal Chicken with Zhoug",cat:"Non-Vegetarian",cuisine:"Middle Eastern",credit:"Green Team, MasterChef Australia Season 13 (2021)",time:"1 hr",difficulty:"Medium",ingredients:["Chicken","Zhoug","Garlic","Lemon","Yoghurt"],note:"The char has to come from real heat, not just colouring — judges can taste the difference.",method:["Marinate chicken pieces in garlic, lemon, and spice for at least an hour.","Cook over very high heat until genuinely charred, not just browned.","Blend coriander, chilli, and garlic into a sharp, herby zhoug.","Rest the chicken briefly before slicing.","Serve with the zhoug spooned over and a side of yoghurt."]},
+  {name:"Hariyali Chicken with Wattleseed Naan",cat:"Non-Vegetarian",cuisine:"Indian-Australian Fusion",credit:"Kishwar Chowdhury, MasterChef Australia Season 13 (2021)",time:"1 hr 30 min",difficulty:"Hard",ingredients:["Chicken","Wattleseed","Bush Tomato","Quandong","Coriander"],note:"Blending native Australian ingredients into a classic curry base is the whole point of this dish — treat them as seasoning, not garnish.",method:["Marinate chicken in a green coriander-mint-chilli paste (hariyali) for at least an hour.","Cook the chicken through until the marinade clings and lightly chars at the edges.","Fold wattleseed into a naan dough and cook on a very hot pan or tawa.","Simmer bush tomato and quandong into a tart, fruity chutney.","Plate the chicken with the wattleseed naan and a spoon of the chutney."]},
+  {name:"Spiced Lamb Ribs with Roast Garlic Yoghurt & Tabbouleh",cat:"Non-Vegetarian",cuisine:"Middle Eastern",credit:"Green Team, MasterChef Australia Season 13 (2021)",time:"2 hr",difficulty:"Hard",ingredients:["Lamb Ribs","Garlic","Yoghurt","Bulgur Wheat","Parsley"],note:"The ribs need low, slow heat until the meat pulls cleanly off the bone.",method:["Rub lamb ribs generously with a spice blend and marinate for at least an hour.","Roast low and slow until the meat is tender and pulls easily from the bone.","Roast a whole head of garlic and mash it through thick yoghurt.","Make a bright, herb-heavy tabbouleh with bulgur, parsley, and lemon.","Plate the ribs with the garlic yoghurt and tabbouleh alongside."]},
+  {name:"Peppercorn-Crusted Lamb Cutlet with Blackberry Sauce",cat:"Non-Vegetarian",cuisine:"Modern Australian",credit:"Linda Dalrymple, MasterChef Australia Season 13 (2021)",time:"55 min",difficulty:"Hard",ingredients:["Lamb Cutlet","Cauliflower","Blackberry","Peppercorn","Butter"],note:"The lamb needs to rest as long as it cooked — cutting straight off the pan loses all the juice.",method:["Crust lamb cutlets generously in crushed peppercorn.","Sear hard and fast on both sides, then rest well before slicing.","Purée cauliflower with butter and cream until completely smooth.","Reduce blackberries with a touch of red wine into a glossy sauce.","Plate the purée first, then the lamb, finished with the blackberry sauce."]},
+  {name:"Beef Cheeks in Ras El Hanout Tomato Sauce",cat:"Non-Vegetarian",cuisine:"Middle Eastern",credit:"Green Team, MasterChef Australia Season 13 (2021)",time:"3 hr",difficulty:"Hard",ingredients:["Beef Cheek","Ras El Hanout","Tomato","Onion","Coriander"],note:"Beef cheek rewards patience — rushed braising leaves it tough instead of falling apart.",method:["Sear beef cheeks hard on all sides before braising.","Bloom ras el hanout spice blend in the pan before adding tomato and stock.","Braise low and slow for at least 2.5 hours until completely tender.","Reduce the braising liquid to a thick, spiced sauce.","Shred slightly and serve the beef cheek napped in the sauce with fresh coriander."]},
+  {name:"Bush Pepper Beef",cat:"Non-Vegetarian",cuisine:"Modern Australian",credit:"Yellow Team, MasterChef Australia Season 13 (2021)",time:"1 hr",difficulty:"Medium",ingredients:["Beef","Bush Pepper","Butter","Native Herbs","Onion"],note:"Native pepperberry is potent — a light hand goes further than judges expect.",method:["Crust beef with cracked native bush pepper before searing.","Sear over high heat to a deep crust, then rest.","Build a pan sauce with butter, shallot, and the resting juices.","Slice the beef against the grain.","Finish the plate with native herb leaves and the pan sauce."]},
+  {name:"Crispy Duck with Pickled Turmeric and Sambal",cat:"Non-Vegetarian",cuisine:"Southeast Asian",credit:"Brent Draper, MasterChef Australia Season 15 (2023)",time:"1 hr 15 min",difficulty:"Hard",ingredients:["Duck","Turmeric","Sambal","Vinegar","Shallot"],note:"Score the duck skin properly — an uneven score is the fastest way to uneven crisping.",method:["Score the duck skin in a tight crosshatch, taking care not to cut into the meat.","Render the fat slowly, skin-side down, until deeply crisp.","Quick-pickle sliced turmeric and shallot in vinegar and sugar.","Blend a fiery sambal from chilli, garlic, and shrimp paste.","Slice the duck and plate with the pickled turmeric and a spoon of sambal."]},
+  {name:"Greek Lamb with Pita Bread and Tzatziki",cat:"Non-Vegetarian",cuisine:"Greek",credit:"Theo Loizou, MasterChef Australia Season 15 (2023)",time:"2 hr",difficulty:"Medium",ingredients:["Lamb","Pita Bread","Yoghurt","Cucumber","Oregano"],note:"An overnight marinade round — the flavour needs to have actually penetrated the meat, not just sit on the surface.",method:["Marinate lamb overnight in lemon, garlic, and oregano.","Slow-roast or spit-roast until the meat is tender and well charred at the edges.","Grate cucumber, salt it, and squeeze out the liquid before folding into yoghurt for tzatziki.","Warm pita bread directly over a flame until lightly charred.","Serve the lamb wrapped in warm pita with a generous spoon of tzatziki."]},
+  {name:"Thai Chicken Broth with Peanut & Lime Sambal",cat:"Non-Vegetarian",cuisine:"Thai",credit:"Declan Cleary, MasterChef Australia Season 15 (2023)",time:"45 min",difficulty:"Medium",ingredients:["Chicken","Peanut","Lime","Lemongrass","Chilli"],note:"The broth is judged on clarity and balance — a cloudy, over-seasoned broth doesn't make the cut.",method:["Simmer chicken with lemongrass, galangal, and aromatics to build a clear, fragrant broth.","Poach chicken pieces gently in the broth until just cooked through.","Toast and crush peanuts for texture.","Blend chilli, lime, and a little palm sugar into a sharp sambal.","Ladle the broth over the chicken and finish with the peanut and sambal."]},
+  {name:"Prawn and Pineapple Broth with Glutinous Rice Balls",cat:"Non-Vegetarian",cuisine:"Southeast Asian",credit:"Minoli De Silva, MasterChef Australia Season 13 (2021)",time:"1 hr",difficulty:"Hard",ingredients:["Prawns","Pineapple","Glutinous Rice","Chilli","Lime"],note:"The prawn shells go into the broth, not the bin — that's where most of the flavour lives.",method:["Simmer prawn shells and heads into a rich, sweet-savoury stock.","Add pineapple and aromatics, simmering until the broth is balanced and fragrant.","Shape glutinous rice into small balls and steam until translucent.","Poach the prawns briefly in the hot broth just before serving.","Ladle the broth over the prawns and rice balls, finishing with lime and chilli."]},
+  {name:"Beef Efo Riro with Semo",cat:"Non-Vegetarian",cuisine:"West African",credit:"Olaolu, MasterChef Australia 2026 season",time:"1 hr 30 min",difficulty:"Hard",ingredients:["Beef","Spinach","Palm Oil","Scotch Bonnet","Semolina"],note:"Traditionally eaten by hand — the semolina needs to be smooth and stretchy, not stiff.",method:["Simmer beef with onion and stock until tender, reserving the cooking liquid.","Blend pepper, tomato, and scotch bonnet into a base and fry it in palm oil until deeply reduced.","Stir in the cooked beef and shredded spinach, simmering until the greens wilt through.","Whisk semolina into boiling water gradually, stirring hard, until smooth and elastic.","Press the semolina against the side of the pan to build stretch, then serve alongside the stew."]},
+  {name:"Chicken Momos with Tomato Chutney and Chilli Oil",cat:"Non-Vegetarian",cuisine:"Nepali/Tibetan",credit:"Dot, MasterChef Australia 2026 season",time:"1 hr",difficulty:"Medium",ingredients:["Chicken","Ginger","Garlic","Flour","Chilli Oil"],note:"The dough needs a proper 20-minute rest, or the wrappers tear the moment they hit the steamer.",method:["Knead a simple flour and water dough until smooth, then rest it, covered, for 20 minutes.","Mix minced chicken with ginger, garlic, spring onion, and a touch of soy sauce.","Roll the dough into thin rounds and pleat each one around a spoonful of filling.","Steam for about 7 minutes until glossy and cooked through.","Serve with a tomato chutney and a sharp, chilli-forward oil."]},
+  {name:"Petro's Prawn Bisque Pasta",cat:"Non-Vegetarian",cuisine:"Italian-Fusion",credit:"Petro, MasterChef Australia 2026 season",time:"1 hr",difficulty:"Hard",ingredients:["Prawns","Pasta","Cream","Tomato","Brandy"],note:"Blend and pass the bisque through a fine sieve — any grit in the sauce ends the dish.",method:["Sauté prawn shells hard with aromatics to build the base of the bisque.","Deglaze with brandy, then add tomato and stock, simmering to develop flavour.","Blend the bisque thoroughly, then pass it through a fine sieve for a silky texture.","Cook fresh pasta and toss through the bisque with a little cream.","Finish with the poached prawns and a scatter of herbs."]},
+  {name:"Lucy's Fakeaway Beef and Mushroom Noodles",cat:"Non-Vegetarian",cuisine:"Chinese-Fusion",credit:"Lucy, MasterChef Australia 2026 season",time:"35 min",difficulty:"Medium",ingredients:["Beef","Mushroom","Noodles","Soy Sauce","Garlic"],note:"Balance the sauces and keep the meat crispy — that's the exact note Lucy herself gave for this dish.",method:["Slice beef thinly against the grain for a quick, even sear.","Fry the beef in a very hot pan until the edges turn properly crisp.","Sauté mushrooms and garlic in the same pan to pick up the beef flavour.","Toss cooked noodles through with a balanced soy-based sauce.","Combine the beef and mushrooms back through the noodles just before serving."]},
+  {name:"Aaron's Steak Tartare with Wasabi Cream & Miso Burnt Butter",cat:"Non-Vegetarian",cuisine:"Japanese-Fusion",credit:"Aaron, MasterChef Australia 2026 season",time:"40 min",difficulty:"Hard",ingredients:["Beef","Wasabi","Miso","Butter","Egg Yolk"],note:"Knife-cut, not machine-minced — the texture of hand-cut tartare is what judges are checking for first.",method:["Hand-cut beef fillet into a fine, even dice — never use a mincer.","Season lightly with shallot, capers, and a touch of Worcestershire.","Whip cream with wasabi until it holds soft peaks.","Brown butter until nutty, then whisk in white miso.","Plate the tartare with the wasabi cream, miso butter, and a raw egg yolk on top."]},
+  {name:"Rue's BBQ Chicken Marylands with BarbeRue Sauce",cat:"Non-Vegetarian",cuisine:"Australian BBQ",credit:"Rue, MasterChef Australia: Back to Win (2025)",time:"1 hr",difficulty:"Medium",ingredients:["Chicken","BBQ Sauce","Apple","Cucumber","Brown Sugar"],note:"Baste in stages, not once at the end — that's how the glaze builds real depth on the grill.",method:["Marinate chicken marylands in a spiced dry rub.","Grill low and slow, basting repeatedly with a homemade barbecue sauce as it cooks.","Let the sauce caramelise into a sticky lacquer over multiple bastes.","Shred apple and cucumber into a sharp, tangy slaw.","Serve the glazed chicken with the slaw on the side."]},
+  {name:"Lydia's Charred Octopus",cat:"Non-Vegetarian",cuisine:"Mediterranean",credit:"Lydia, MasterChef Australia 2026 season",time:"1 hr 30 min",difficulty:"Hard",ingredients:["Octopus","Paprika","Lemon","Olive Oil","Chilli"],note:"Braise low before it ever sees the grill — the char is the last step, not the cooking method.",method:["Braise octopus gently in aromatics until tender all the way through.","Cool the octopus, then pat completely dry.","Char hard on a very hot grill just to colour the exterior without overcooking it.","Dress with olive oil, lemon, smoked paprika, and chilli.","Slice and plate immediately while still warm from the grill."]},
+  {name:"Roast Pork Belly with Chargrilled Peach Salsa",cat:"Non-Vegetarian",cuisine:"Modern Australian",credit:"Justine Schofield, MasterChef Australia Season 1 (2009), as featured on delicious.com.au",time:"2 hr",difficulty:"Medium",ingredients:["Pork Belly","Peach","Chilli","Lime","Coriander"],note:"Justine's approach swaps in a lighter fruit salsa to cut through the richness of the crackling.",method:["Score the pork skin in even lines and rub with salt to draw out moisture.","Roast low and slow until the meat is tender, then finish at very high heat to blister the crackling.","Chargrill peach halves until caramelised at the edges.","Dice the grilled peach and toss with chilli, lime, and coriander for a sharp salsa.","Rest the pork briefly, then carve and serve topped with the peach salsa."]},
+  {name:"Korean Brisket and Kimchi Burger",cat:"Non-Vegetarian",cuisine:"Korean-Fusion",credit:"Matt Preston, MasterChef Australia judge, as featured on delicious.com.au",time:"4 hr",difficulty:"Hard",ingredients:["Beef Brisket","Kimchi","Gochujang","Brioche Bun","Pickles"],note:"A judge's dish with a genuinely long ingredient list — the payoff is a brisket that pulls apart with a fork.",method:["Rub brisket with a spiced dry rub and slow-cook until completely tender.","Shred the brisket and toss through a portion of its own cooking juices.","Glaze with a gochujang-based sauce for sweetness and heat.","Toast brioche buns and pile high with the brisket.","Top with kimchi and quick pickles for crunch and acidity."]},
+  {name:"Sashimi Tuna with Wasabi Avocado",cat:"Non-Vegetarian",cuisine:"Japanese-Fusion",credit:"Matt Preston, MasterChef Australia judge, as featured on delicious.com.au",time:"25 min",difficulty:"Medium",ingredients:["Tuna","Avocado","Wasabi","Soy Sauce","Sesame"],note:"Only sashimi-grade tuna will do here — the dish has nowhere to hide if the fish isn't right.",method:["Slice very fresh, sashimi-grade tuna into thin, even pieces.","Mash avocado with a touch of wasabi, lime, and salt until smooth.","Spread the wasabi avocado onto a plate as the base.","Arrange the tuna slices over the avocado.","Finish with a drizzle of soy sauce and a scatter of toasted sesame seeds."]},
+  {name:"Rib-Eye with Anchovy Butter and Roasted Cauliflower",cat:"Non-Vegetarian",cuisine:"Modern European",credit:"Shannon Bennett, MasterChef Australia guest chef, as featured on delicious.com.au",time:"1 hr",difficulty:"Medium",ingredients:["Rib-Eye","Anchovy","Butter","Cauliflower","Garlic"],note:"The anchovy should melt completely into the butter — if you can still see or bite into a fillet, it hasn't been worked in enough.",method:["Bring the rib-eye to room temperature before searing hard on both sides.","Rest the steak well after cooking.","Mash anchovy fillets into softened butter until fully combined.","Roast cauliflower florets until deeply golden and slightly charred.","Slice the rested steak and top with a spoon of the anchovy butter, served alongside the roasted cauliflower."]},
+  {name:"Juan's Empanadas with Chimichurri",cat:"Non-Vegetarian",cuisine:"Argentinian",credit:"Juan, MasterChef Australia contestant, as featured on Traditional but not / MasterChef Australia",time:"1 hr 15 min",difficulty:"Medium",ingredients:["Beef","Empanada Pastry","Cumin","Onion","Chimichurri"],note:"The filling should be cooked down until dry — wet filling is the single biggest cause of a soggy empanada.",method:["Cook minced beef with onion, cumin, and paprika until fully dry, with no excess liquid.","Cool the filling completely before assembling.","Cut rounds of empanada pastry and fill with a spoonful of the beef mixture.","Fold and crimp the edges firmly, then fry or bake until golden.","Blend parsley, garlic, oregano, oil, and vinegar into a bright chimichurri to serve alongside."]},
+  {name:"Pipi Shellfish with Italian Flavours",cat:"Non-Vegetarian",cuisine:"Italian-Fusion",credit:"Elena Duggan, MasterChef Australia judge, as featured on delicious.com.au",time:"30 min",difficulty:"Medium",ingredients:["Pipis","White Wine","Garlic","Chilli","Parsley"],note:"A simple shellfish dish inspired by childhood memories of foraging — the pipis themselves are the whole point, so don't overdress them.",method:["Purge pipis in salted water to remove any grit.","Sauté garlic and chilli in olive oil until just fragrant, not browned.","Add the pipis and a splash of white wine, covering the pan to steam them open.","Discard any pipis that don't open.","Toss through chopped parsley and finish with a squeeze of lemon."]},
+  {name:"Crumbed Fish and Chip Cakes with Spiced Mayonnaise",cat:"Non-Vegetarian",cuisine:"British-Australian",credit:"Team Challenge, MasterChef Australia (elevated pub food)",time:"1 hr",difficulty:"Medium",ingredients:["Fish","Potato","Breadcrumbs","Mayonnaise","Fennel"],note:"An 'elevated pub food' team challenge — the trick is getting the fish cake to hold together without turning gluggy.",method:["Poach fish gently until just cooked, then flake into a bowl.","Mix the flaked fish with mashed potato, herbs, and seasoning.","Shape into cakes, then coat in flour, egg, and breadcrumbs.","Shallow-fry until golden and crisp on both sides.","Serve with a spiced mayonnaise and a sharp apple and fennel slaw."]},
+  {name:"Matt Preston's Lasagne",cat:"Non-Vegetarian",cuisine:"Italian",credit:"Matt Preston, MasterChef Australia judge, as featured on delicious.com.au",time:"4 hr",difficulty:"Hard",ingredients:["Beef","Pork","Pasta Sheets","Tomato","Bechamel"],note:"The judge who shared this recipe rates it as one of the all-time greats of Italian cooking — this is a proper, long-cooked ragu, not a weeknight shortcut.",method:["Slow-cook a beef and pork ragu for several hours until deeply rich and reduced.","Make a smooth bechamel sauce, whisking constantly to avoid lumps.","Layer pasta sheets, ragu, and bechamel repeatedly in a deep dish.","Finish the top layer with bechamel and a generous scatter of cheese.","Bake until bubbling and golden, then rest for 15 minutes before cutting."]},
+
+  // ---------------- DESSERTS ----------------
+  {name:"Basque Burnt Cheesecake",cat:"Dessert",cuisine:"Spanish",credit:"Inspired by Reynold Poernomo, MasterChef Australia: Back to Win (2020)",time:"1 hr + chill",difficulty:"Medium",ingredients:["Cream Cheese","Egg","Cream","Sugar","Flour"],note:"The burnt top isn't a mistake here — it's the whole point of the dish.",method:["Beat cream cheese and sugar together until completely smooth.","Add eggs one at a time, then stir in cream and a small amount of flour.","Pour into a parchment-lined tin, letting the paper crumple up the sides.","Bake at a very high heat until the top is deeply burnished and the centre still wobbles.","Cool to room temperature, then chill before slicing for a custardy centre."]},
+  {name:"Native Australian S'mores",cat:"Dessert",cuisine:"Modern Australian",credit:"Darrsh Clarke, MasterChef Australia: Back to Win (2025)",time:"1 hr",difficulty:"Medium",ingredients:["Wattleseed","Leatherwood Honey","Chocolate","Marshmallow","Activated Charcoal"],note:"A campfire classic rebuilt with native ingredients — the wattleseed needs to actually change the flavour, not just the colour.",method:["Fold roasted wattleseed into a rich chocolate ganache base.","Make a marshmallow tinted with a touch of activated charcoal.","Torch the marshmallow until deeply toasted on the outside, soft within.","Warm leatherwood honey slightly to loosen it for drizzling.","Assemble the components together and finish with a generous drizzle of the honey."]},
+  {name:"Chocolate and Cherries",cat:"Dessert",cuisine:"French-Fusion",credit:"Rue, MasterChef Australia: Back to Win (2025)",time:"2 hr",difficulty:"Hard",ingredients:["Dark Chocolate","Cherries","Milk","Cream","Egg Yolk"],note:"A quietly confident plate — precision on the crémeux set is what separates a top dish from a good one.",method:["Make a chocolate crémeux by tempering egg yolks into warm milk and cream, then whisking in dark chocolate until glossy.","Chill the crémeux until fully set.","Quick-pickle pitted cherries in lemon juice for a sharp contrast.","Cook down a portion of cherries with sugar and lemon into a jam.","Churn a simple vanilla ice cream and plate everything together with the crémeux as the anchor."]},
+  {name:"Salted Caramel & Macadamia Éclairs",cat:"Dessert",cuisine:"French",credit:"Pietro, MasterChef Australia 2026 season",time:"1 hr 30 min",difficulty:"Hard",ingredients:["Choux Pastry","Salted Caramel","Macadamia","Cream","Chocolate"],note:"Choux has to be piped evenly and dried out fully in the oven — any underbaked pastry collapses on cooling.",method:["Make a choux pastry and pipe into even éclair shapes.","Bake until deeply golden and completely dried out, resisting the urge to open the oven early.","Whip cream and fill the cooled éclairs generously.","Make a salted caramel and dip the tops of the éclairs to glaze.","Finish with crushed toasted macadamia over the caramel glaze."]},
+  {name:"Flourless Chocolate Sponge with Chilli Peanut Praline",cat:"Dessert",cuisine:"Modern Australian",credit:"Inspired by a 2026-season contestant dish, MasterChef Australia",time:"1 hr",difficulty:"Hard",ingredients:["Dark Chocolate","Peanut","Chilli","Soy Milk","Egg"],note:"The chilli should arrive last on the palate, after the chocolate — front-loading the heat unbalances the whole plate.",method:["Whisk egg whites and yolks separately, then fold with melted chocolate to keep the sponge light without flour.","Bake gently until just set, keeping a slightly fudgy centre.","Make a peanut praline, stirring through a little chilli while it's still warm and pliable.","Churn a soy milk ice cream for a dairy-free finish.","Plate the sponge with shards of praline and a scoop of the ice cream."]},
+  {name:"Black Sesame Yuzu Chiffon Cake",cat:"Dessert",cuisine:"Japanese-Fusion",credit:"Jackie, MasterChef Australia 2026 season",time:"1 hr 15 min",difficulty:"Hard",ingredients:["Black Sesame","Yuzu","Egg","Flour","Sugar"],note:"Chiffon lives or dies on the fold — deflate the egg whites and the whole cake falls flat.",method:["Whisk egg yolks with black sesame paste and yuzu zest until smooth.","Whip egg whites to stiff, glossy peaks separately.","Fold the whites gently into the yolk mixture in stages, keeping as much air as possible.","Bake in an ungreased chiffon tin, then cool the cake upside down.","Glaze with a yuzu syrup once fully cooled."]},
+  {name:"Hazelnut, Coffee and Fennel Seed Mille-Feuille",cat:"Dessert",cuisine:"French",credit:"Bella, MasterChef Australia 2026 season",time:"1 hr 45 min",difficulty:"Hard",ingredients:["Puff Pastry","Hazelnut","Coffee","Fennel Seed","Cream"],note:"Every layer of pastry needs to be baked completely flat and even, or the mille-feuille won't stack cleanly.",method:["Bake puff pastry between trays so it stays perfectly flat.","Toast fennel seed and grind lightly to fold through a coffee pastry cream.","Toast and chop hazelnuts for both texture and garnish.","Layer the crisp pastry sheets with the coffee-fennel cream, keeping the layers even.","Finish the top layer with a light dusting of icing sugar and the toasted hazelnuts."]},
+  {name:"Curry Ice Cream with Pineapple Granita",cat:"Dessert",cuisine:"Modern Australian",credit:"Pete Campbell, MasterChef Australia Season 13 (2021)",time:"1 hr + freeze",difficulty:"Hard",ingredients:["Curry Spice","Pineapple","Peanut","Coconut","Cream"],note:"A savoury spice in a dessert is a genuine risk — the balance of sugar has to compensate exactly.",method:["Infuse a custard base with a light curry spice blend, straining well before churning.","Churn the mixture into ice cream and freeze until firm.","Blend pineapple juice with a touch of sugar and freeze flat, scraping into granita crystals.","Toast coconut and peanut together into a crunchy crumble.","Plate the ice cream and granita together with the crumble scattered over the top."]},
+  {name:"Pavlova Roulade with BBQ Pineapple",cat:"Dessert",cuisine:"Modern Australian",credit:"Scott Bagnell, MasterChef Australia Season 13 (2021)",time:"1 hr 30 min",difficulty:"Hard",ingredients:["Egg White","Sugar","Pineapple","Cream","Molasses"],note:"Rolling a pavlova is riskier than a traditional round — the meringue has to stay flexible enough not to shatter.",method:["Whisk egg whites and sugar to a stable, glossy meringue.","Spread thinly onto a lined tray and bake until just set but still pliable.","Char pineapple wedges on a hot grill or barbecue until caramelised.","Whip cream and spread over the warm meringue before rolling it into a log.","Slice and serve with the BBQ pineapple and a molasses-lime glaze."]},
+  {name:"Bush Honey, Wattleseed and Native Plum",cat:"Dessert",cuisine:"Modern Australian",credit:"Yellow Team, MasterChef Australia Season 13 (2021)",time:"1 hr",difficulty:"Hard",ingredients:["Bush Honey","Wattleseed","Native Plum","Cream","Meringue"],note:"A native-ingredients pressure test — restraint again matters, since bush honey and wattleseed are both intensely flavoured.",method:["Reduce native plum with a little sugar into a sharp, tart compote.","Toast wattleseed lightly to bring out its coffee-like aroma before folding into a cream base.","Whisk a simple meringue and pipe into small shards, baking until crisp.","Warm bush honey gently for drizzling.","Assemble the plum compote, wattleseed cream, and meringue shards, finishing with the honey."]},
+  {name:"Gâteau au Yaourt with Sour Cherry Compote",cat:"Dessert",cuisine:"French",credit:"Emelia Jackson, MasterChef Australia winner",time:"55 min",difficulty:"Easy",ingredients:["Yoghurt","Flour","Sugar","Oil","Sour Cherry"],note:"The classic French kids' first cake — simple, but the crumb has to stay genuinely light from the oil, not dense.",method:["Whisk yoghurt, sugar, and oil together until smooth.","Fold in flour and a leavening agent gently, taking care not to overmix.","Pour into a lined tin and bake until a skewer comes out clean.","Cook down sour cherries with sugar and a squeeze of lemon into a compote.","Cool the cake before serving each slice with a spoon of the cherry compote."]},
+  {name:"Curtis' Grenache Granita",cat:"Dessert",cuisine:"Modern Australian",credit:"Curtis, MasterChef Australia 2026 season",time:"45 min + freeze",difficulty:"Medium",ingredients:["Red Grapes","Pinot Noir","Sugar","Lemon","Mint"],note:"Scrape the granita often as it freezes — leaving it too long sets a solid block instead of light crystals.",method:["Simmer red grapes gently to release their juice, then strain.","Combine the grape juice with a splash of pinot noir and a little sugar and lemon.","Pour into a shallow tray and freeze, scraping with a fork every 30 minutes to form crystals.","Continue scraping until the granita is made up of light, even flakes.","Serve in chilled glasses with a few torn mint leaves."]},
+  {name:"Larissa's Vinegar Pie",cat:"Dessert",cuisine:"American-Fusion",credit:"Larissa Takchi, MasterChef Australia Season 11 (2019) winner, as featured on delicious.com.au",time:"1 hr 15 min",difficulty:"Medium",ingredients:["Vinegar","Butter","Sugar","Egg","Shortcrust Pastry"],note:"A Depression-era American classic that swaps in vinegar for lemon — the acidity does the same job at a fraction of the cost.",method:["Blind-bake a shortcrust pastry shell until golden.","Whisk butter, sugar, and egg together until smooth.","Stir in a good splash of vinegar for the pie's signature sharp edge.","Pour the filling into the baked shell and bake until just set with a slight wobble.","Cool completely before slicing, letting the filling firm up fully."]},
+  {name:"Khanh Ong's Rich Chocolate Tart",cat:"Dessert",cuisine:"Modern Australian",credit:"Khanh Ong, MasterChef Australia contestant, as featured on delicious.com.au",time:"1 hr 30 min",difficulty:"Medium",ingredients:["Dark Chocolate","Butter","Cream","Egg","Shortcrust Pastry"],note:"Khanh describes this one as rich enough to mend a broken heart — it leans hard into a dense, fudgy filling rather than a light mousse.",method:["Blind-bake a shortcrust pastry shell in a 23cm tart pan until crisp.","Melt dark chocolate and butter together until glossy.","Whisk in cream and eggs until the mixture is smooth and thick.","Pour into the baked shell and bake gently until just set at the edges but still soft in the centre.","Cool to room temperature before slicing for the fudgiest texture."]},
+  {name:"Matt Preston's Cakey Loaf",cat:"Dessert",cuisine:"Modern Australian",credit:"Matt Preston, MasterChef Australia judge, as featured on delicious.com.au",time:"1 hr 15 min",difficulty:"Easy",ingredients:["Flour","Butter","Sugar","Egg","Buttermilk"],note:"Described as sounding impossible — a loaf with a genuinely crunchy crust and a soft, cakey centre.",method:["Cream butter and sugar together until light and fluffy.","Beat in eggs one at a time, then fold in flour alternately with buttermilk.","Pour into a loaf tin and top with a generous scatter of raw sugar for the crust.","Bake until deeply golden and a skewer comes out clean.","Cool in the tin before turning out to preserve the crunchy top."]},
+  {name:"Baked White Chocolate and Raspberry Cheesecake",cat:"Dessert",cuisine:"Modern Australian",credit:"A MasterChef Australia contestant dish, as featured on delicious.com.au",time:"1 hr 30 min + chill",difficulty:"Medium",ingredients:["White Chocolate","Raspberry","Cream Cheese","Egg","Biscuit Base"],note:"White chocolate is sweeter and softer-set than dark, so the raspberry needs real tartness to balance it.",method:["Press a buttery biscuit crumb into the base of a springform tin.","Melt white chocolate gently and beat through softened cream cheese.","Add eggs one at a time, mixing until just combined.","Fold through fresh raspberries, then bake in a water bath until set with a slight wobble.","Chill for several hours before releasing from the tin and slicing."]},
+  {name:"Green Tea Ice Cream",cat:"Dessert",cuisine:"Japanese",credit:"A MasterChef Australia contestant dish, as featured on delicious.com.au",time:"30 min + freeze",difficulty:"Easy",ingredients:["Matcha","Cream","Milk","Sugar","Egg Yolk"],note:"Sift the matcha before whisking it in — clumps of powder never fully dissolve once the custard is cooked.",method:["Sift matcha powder to remove any lumps before use.","Whisk egg yolks and sugar until pale, then temper in warm milk and cream.","Cook the custard gently over low heat, stirring constantly, until thickened.","Whisk the sifted matcha through the warm custard until fully dissolved.","Chill completely, then churn in an ice cream machine until soft-set."]},
+  {name:"Snezana's Krofne with Strawberry Jam and Custard",cat:"Dessert",cuisine:"Serbian",credit:"Snezana Calic, MasterChef Australia contestant, as featured on Traditional but not / MasterChef Australia",time:"2 hr",difficulty:"Hard",ingredients:["Doughnut Dough","Strawberry Jam","Custard","Sugar","Yeast"],note:"Krofne are proofed twice — rushing the second prove is what leaves them dense instead of pillowy.",method:["Make an enriched yeasted dough and prove until doubled in size.","Punch down, shape into rounds, and prove a second time until light and puffy.","Deep-fry until deep golden on both sides.","While still warm, fill each krofna with strawberry jam on one side and custard on the other.","Dust generously with sugar before serving."]},
+  {name:"Sashi Cheliah's Jaggery Cheesecake",cat:"Dessert",cuisine:"Indian-Fusion",credit:"Sashi Cheliah, MasterChef Australia Season 10 (2018) winner, as featured on delicious.com.au",time:"1 hr 30 min + chill",difficulty:"Medium",ingredients:["Jaggery","Cream Cheese","Cardamom","Digestive Biscuits","Egg"],note:"Sashi's Indian twist on a classic baked cheesecake swaps refined sugar for jaggery, which brings a deep, almost smoky caramel note instead of plain sweetness.",method:["Crush digestive biscuits and bind with melted butter, then press firmly into the base of a springform tin.","Beat cream cheese until smooth, then dissolve grated jaggery through it in place of sugar.","Add eggs one at a time, mixing gently to avoid incorporating too much air.","Pour over the biscuit base and bake in a water bath until just set with a slight wobble in the centre.","Chill for several hours, then finish with a dollop of cardamom-spiced whipped cream before serving."]},
+  {name:"Chocolate Peanut Caramel Tart",cat:"Dessert",cuisine:"Modern Australian",credit:"A MasterChef Australia contestant dish, as featured on delicious.com.au",time:"1 hr 30 min + chill",difficulty:"Medium",ingredients:["Dark Chocolate","Peanuts","Caramel","Shortcrust Pastry","Cream"],note:"Built like the chocolate bar it's named for — the trick is keeping the caramel layer thick enough to hold its own against the chocolate on top.",method:["Blind-bake a shortcrust pastry shell until fully golden and crisp.","Make a caramel by melting sugar until deep amber, then carefully whisking in warm cream and butter.","Stir roasted peanuts through the warm caramel and pour into the baked shell.","Chill until the caramel layer is fully set.","Melt dark chocolate with a little cream into a glossy ganache and pour over the set caramel, then chill again before slicing."]},
+];
+
+const ALL_CUISINES = [...new Set(RECIPES.map(r=>r.cuisine))].sort();
+const QUICK_INGREDIENTS = ["Chicken","Lamb","Beef","Duck","Pork","Prawns","Octopus","Tuna","Mushroom","Cauliflower","Chocolate"];
+
+let state = {cat:"All", cuisines:new Set(), ingredientChip:null, search:"", passed:new Set(), mysteryActive:false};
+
+function el(tag, cls, text){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(text!==undefined) e.textContent = text;
+  return e;
+}
+
+function buildCuisineChips(){
+  const wrap = document.getElementById('cuisineChips');
+  ALL_CUISINES.forEach(c=>{
+    const chip = el('button','chip',c);
+    chip.addEventListener('click', ()=>{
+      if(state.cuisines.has(c)) state.cuisines.delete(c); else state.cuisines.add(c);
+      chip.classList.toggle('active');
+      render();
+    });
+    wrap.appendChild(chip);
+  });
+}
+
+function buildIngredientChips(){
+  const wrap = document.getElementById('ingredientChips');
+  QUICK_INGREDIENTS.forEach(ing=>{
+    const chip = el('button','chip',ing);
+    chip.addEventListener('click', ()=>{
+      const isActive = state.ingredientChip === ing;
+      [...wrap.children].forEach(c=>c.classList.remove('active'));
+      state.ingredientChip = isActive ? null : ing;
+      if(!isActive) chip.classList.add('active');
+      render();
+    });
+    wrap.appendChild(chip);
+  });
+}
+
+function matchesFilters(r){
+  if(state.cat !== "All" && r.cat !== state.cat) return false;
+  if(state.cuisines.size > 0 && !state.cuisines.has(r.cuisine)) return false;
+  if(state.ingredientChip && !r.ingredients.some(i=>i.toLowerCase().includes(state.ingredientChip.toLowerCase()))) return false;
+  if(state.mysteryActive){
+    const box = mysteryOfTheWeek();
+    const hit = box.some(m => r.ingredients.some(i=>i.toLowerCase().includes(m.toLowerCase())));
+    if(!hit) return false;
+  }
+  if(state.search.trim()){
+    const q = state.search.trim().toLowerCase();
+    const hay = (r.name + " " + r.cuisine + " " + r.ingredients.join(" ")).toLowerCase();
+    if(!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+function render(){
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('emptyState');
+  grid.innerHTML = "";
+  const results = RECIPES.filter(matchesFilters);
+  document.getElementById('ticketCount').textContent = `${results.length} DISH${results.length===1?'':'ES'} ON THE PASS`;
+  empty.style.display = results.length ? "none" : "block";
+
+  results.forEach(r=>{
+    const t = el('div','ticket'+(state.passed.has(r.name)?' passed':''));
+    const head = el('div','ticket-head');
+    const left = el('span',null); left.innerHTML = `<span class="cat-dot ${r.cat}"></span>${r.cat}`;
+    const right = el('span',null, r.difficulty);
+    head.appendChild(left); head.appendChild(right);
+    t.appendChild(head);
+
+    t.appendChild(el('div','dish-name', r.name));
+    t.appendChild(el('div','cuisine', r.cuisine + ' cuisine'));
+    if(r.credit){ t.appendChild(el('div','credit-badge','★ ' + r.credit.split(',')[0].replace(/^Inspired by /,''))); }
+
+    const tags = el('div','ing-tags');
+    r.ingredients.slice(0,4).forEach(i=> tags.appendChild(el('span','ing-tag', i)));
+    t.appendChild(tags);
+
+    const foot = el('div','ticket-foot');
+    foot.appendChild(el('span',null, r.time));
+    const passBtn = el('span',null, state.passed.has(r.name) ? '★ Passed' : '☆ Mark passed');
+    passBtn.style.cursor='pointer';
+    passBtn.addEventListener('click',(e)=>{
+      e.stopPropagation();
+      if(state.passed.has(r.name)) state.passed.delete(r.name); else state.passed.add(r.name);
+      render();
+    });
+    foot.appendChild(passBtn);
+    t.appendChild(foot);
+
+    const stamp = el('div','stamp','PASSED');
+    t.appendChild(stamp);
+
+    t.addEventListener('click', ()=>openDocket(r));
+    grid.appendChild(t);
+  });
+}
+
+function openDocket(r){
+  const body = document.getElementById('docketBody');
+  body.innerHTML = "";
+  const closeBtn = el('button','docket-close','×');
+  closeBtn.addEventListener('click', closeDocket);
+  body.appendChild(closeBtn);
+
+  const head = el('div','ticket-head');
+  head.innerHTML = `<span><span class="cat-dot ${r.cat}"></span>${r.cat}</span><span>${r.difficulty}</span>`;
+  body.appendChild(head);
+  body.appendChild(el('div','dish-name', r.name));
+  body.appendChild(el('div','cuisine', r.cuisine + ' cuisine'));
+  if(r.credit){ body.appendChild(el('div','credit-line', '★ ' + r.credit)); }
+  body.appendChild(el('p','judge-note', '"' + r.note + '"'));
+
+  const meta = el('div','docket-meta');
+  meta.innerHTML = `<span>⏱ ${r.time}</span><span>◆ ${r.difficulty}</span><span>🌍 ${r.cuisine}</span>`;
+  body.appendChild(meta);
+
+  body.appendChild(el('h4',null,'Ingredients'));
+  const ul = el('ul');
+  r.ingredients.forEach(i=> ul.appendChild(el('li',null,i)));
+  body.appendChild(ul);
+
+  body.appendChild(el('h4',null,'Method'));
+  const ol = el('ol');
+  r.method.forEach(step=> ol.appendChild(el('li',null,step)));
+  body.appendChild(ol);
+
+  document.getElementById('overlay').classList.add('open');
+}
+function closeDocket(){ document.getElementById('overlay').classList.remove('open'); }
+document.getElementById('overlay').addEventListener('click', (e)=>{ if(e.target.id==='overlay') closeDocket(); });
+document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeDocket(); });
+
+document.getElementById('catTabs').addEventListener('click',(e)=>{
+  if(e.target.classList.contains('cat-tab')){
+    [...e.currentTarget.children].forEach(c=>c.classList.remove('active'));
+    e.target.classList.add('active');
+    state.cat = e.target.dataset.cat;
+    render();
+  }
+});
+
+document.getElementById('searchInput').addEventListener('input',(e)=>{
+  state.search = e.target.value;
+  render();
+});
+
+document.getElementById('clearBtn').addEventListener('click',()=>{
+  state = {cat:"All", cuisines:new Set(), ingredientChip:null, search:"", passed:state.passed};
+  document.getElementById('searchInput').value = "";
+  [...document.getElementById('cuisineChips').children].forEach(c=>c.classList.remove('active'));
+  [...document.getElementById('ingredientChips').children].forEach(c=>c.classList.remove('active'));
+  [...document.getElementById('catTabs').children].forEach(c=>c.classList.remove('active'));
+  document.querySelector('.cat-tab[data-cat="All"]').classList.add('active');
+  render();
+});
+
+/* ---------- MYSTERY BOX ---------- */
+const MASTER_INGREDIENTS = [...new Set(RECIPES.flatMap(r=>r.ingredients))];
+
+function getISOWeek(d){
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay()||7));
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+  return Math.ceil((((date - yearStart) / 86400000) + 1) / 7);
+}
+function seededRandom(seed){
+  let s = seed % 2147483647;
+  if (s <= 0) s += 2147483646;
+  return function(){ s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+}
+let _mysteryCache = null;
+function mysteryOfTheWeek(){
+  if(_mysteryCache) return _mysteryCache;
+  const now = new Date();
+  const week = getISOWeek(now);
+  const seed = now.getFullYear() * 100 + week;
+  const rand = seededRandom(seed);
+  const pool = [...MASTER_INGREDIENTS];
+  const picked = [];
+  while(picked.length < 3 && pool.length){
+    const idx = Math.floor(rand() * pool.length);
+    picked.push(pool.splice(idx,1)[0]);
+  }
+  _mysteryCache = picked; // flat array of 3 ingredient names, with week/year attached for display
+  _mysteryCache.week = week;
+  _mysteryCache.year = now.getFullYear();
+  return _mysteryCache;
+}
+
+function renderMysteryBox(){
+  const box = mysteryOfTheWeek();
+  document.getElementById('mysteryWeek').textContent = `Week ${box.week}, ${box.year} — resets every Monday`;
+  const wrap = document.getElementById('mysteryItems');
+  wrap.innerHTML = "";
+  box.forEach(item=> wrap.appendChild(el('div','mystery-item', item)));
+}
+
+const feedData = [];
+function renderFeed(){
+  const feed = document.getElementById('mysteryFeed');
+  feed.innerHTML = "";
+  if(feedData.length === 0){
+    feed.appendChild(el('div','feed-empty','No one has posted for this week\'s box yet — be the first on the pass.'));
+    return;
+  }
+  feedData.slice().reverse().forEach(entry=>{
+    const item = el('div','feed-item');
+    item.innerHTML = `<b>${entry.name}</b> made <b>${entry.dish}</b> with this week's box`;
+    feed.appendChild(item);
+  });
+}
+
+document.getElementById('mysteryFilterBtn').addEventListener('click', ()=>{
+  state.mysteryActive = true;
+  document.querySelector('.cat-tab[data-cat="All"]').click();
+  render();
+  document.getElementById('grid').scrollIntoView({behavior:'smooth', block:'start'});
+});
+document.getElementById('mysteryClearBtn').addEventListener('click', ()=>{
+  state.mysteryActive = false;
+  render();
+});
+document.getElementById('mysterySubmitBtn').addEventListener('click', ()=>{
+  const dish = document.getElementById('mysteryDishInput').value.trim();
+  const name = document.getElementById('mysteryNameInput').value.trim() || 'A home cook';
+  if(!dish) return;
+  feedData.push({dish, name});
+  document.getElementById('mysteryDishInput').value = '';
+  document.getElementById('mysteryNameInput').value = '';
+  renderFeed();
+});
+document.getElementById('mysteryCardBtn').addEventListener('click', ()=>{
+  const dish = document.getElementById('mysteryDishInput').value.trim() || 'My Mystery Box dish';
+  const box = mysteryOfTheWeek();
+  const canvas = document.createElement('canvas');
+  canvas.width = 1080; canvas.height = 1080;
+  const ctx = canvas.getContext('2d');
+  ctx.fillStyle = '#1b1918'; ctx.fillRect(0,0,1080,1080);
+  ctx.strokeStyle = '#c9a227'; ctx.lineWidth = 6; ctx.strokeRect(40,40,1000,1000);
+  ctx.fillStyle = '#c9a227';
+  ctx.font = '600 30px monospace';
+  ctx.fillText(`WEEK ${box.week}, ${box.year} · MYSTERY BOX`, 90, 150);
+  ctx.fillStyle = '#e8e4da';
+  ctx.font = '700 72px sans-serif';
+  wrapCanvasText(ctx, dish, 90, 260, 900, 78);
+  ctx.fillStyle = '#a9a49a';
+  ctx.font = '400 32px monospace';
+  ctx.fillText('made with:', 90, 560);
+  ctx.fillStyle = '#f3eee4';
+  box.forEach((item,i)=>{
+    ctx.font = '700 46px sans-serif';
+    ctx.fillText('• ' + item, 90, 630 + i*70);
+  });
+  ctx.fillStyle = '#c9a227';
+  ctx.font = '600 26px monospace';
+  ctx.fillText("THE CHEF'S PASS", 90, 970);
+  const link = document.createElement('a');
+  link.download = `mystery-box-week-${box.week}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+});
+function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight){
+  const words = text.split(' ');
+  let line = '';
+  let curY = y;
+  for(let n=0;n<words.length;n++){
+    const testLine = line + words[n] + ' ';
+    if(ctx.measureText(testLine).width > maxWidth && n > 0){
+      ctx.fillText(line, x, curY);
+      line = words[n] + ' ';
+      curY += lineHeight;
+    } else {
+      line = testLine;
+    }
+  }
+  ctx.fillText(line, x, curY);
+}
+
+buildCuisineChips();
+buildIngredientChips();
+renderMysteryBox();
+renderFeed();
+render();
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
